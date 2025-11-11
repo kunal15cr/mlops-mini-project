@@ -1,4 +1,4 @@
 [core]
-    remote = myremote
-['remote "myremote"']
-    url = C:\Users\Nitish\AppData\Local\Temp
+    remote = local_remote
+['remote "local_remote"']
+    url = C:/Users/kunal/AppData/Local/Temp
