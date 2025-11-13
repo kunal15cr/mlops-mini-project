@@ -1,0 +1,7 @@
+{
+    "model_name": "my_model",
+    "run_id": "98e0bf59f7224be586ad781c36c858bd",
+    "model_path": "model",
+    "model_uri": "runs:/98e0bf59f7224be586ad781c36c858bd/model",
+    "stage": "staging"
+}

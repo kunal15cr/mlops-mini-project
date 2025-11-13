@@ -1,4 +1,4 @@
-# model evaluation
+# updated model evaluation
 
 import numpy as np
 import pandas as pd
@@ -10,10 +10,8 @@ import mlflow
 import mlflow.sklearn
 import dagshub
 
-dagshub.init(repo_owner='kunal15cr', repo_name='mlops-mini-project', mlflow=True)
-
 mlflow.set_tracking_uri('https://dagshub.com/kunal15cr/mlops-mini-project.mlflow')
-
+dagshub.init(repo_owner='kunal15cr', repo_name='mlops-mini-project', mlflow=True)
 
 # logging configuration
 logger = logging.getLogger('model_evaluation')
@@ -92,13 +90,10 @@ def save_metrics(metrics: dict, file_path: str) -> None:
         logger.error('Error occurred while saving the metrics: %s', e)
         raise
 
-def save_model_info(model_id: str, model_name: str, file_path: str) -> None:
-    """Save the model information to a JSON file."""
+def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
+    """Save the model run ID and path to a JSON file."""
     try:
-        model_info = {
-            'model_id': model_id,
-            'model_name': model_name
-        }
+        model_info = {'run_id': run_id, 'model_path': model_path}
         with open(file_path, 'w') as file:
             json.dump(model_info, file, indent=4)
         logger.debug('Model info saved to %s', file_path)
@@ -108,8 +103,7 @@ def save_model_info(model_id: str, model_name: str, file_path: str) -> None:
 
 def main():
     mlflow.set_experiment("dvc-pipeline")
-    with mlflow.start_run() as run:
-        # Start an MLflow run
+    with mlflow.start_run() as run:  # Start an MLflow run
         try:
             clf = load_model('./models/model.pkl')
             test_data = load_data('./data/processed/test_bow.csv')
@@ -132,27 +126,22 @@ def main():
                     mlflow.log_param(param_name, param_value)
             
             # Log model to MLflow
-            #mlflow.log_artifacts(clf, "model")
-
-            save_model_info(run.info.run_id, 'model_evaluation', 'reports/model_info.json')
+            mlflow.log_artifact("models\model.pkl", artifact_path="model")
             
-            mlflow.log_artifact("./models/model.pkl", artifact_path="model")
-
-
-            #save model id
-           
-            
+            # Save model info
+            save_model_info(run.info.run_id, "model", 'reports/experiment_info.json')
             
             # Log the metrics file to MLflow
             mlflow.log_artifact('reports/metrics.json')
+
+            # Log the model info file to MLflow
+            mlflow.log_artifact('reports/model_info.json')
 
             # Log the evaluation errors log file to MLflow
             mlflow.log_artifact('model_evaluation_errors.log')
         except Exception as e:
             logger.error('Failed to complete the model evaluation process: %s', e)
             print(f"Error: {e}")
-        finally:
-            mlflow.end_run()  # End the MLflow run
 
 if __name__ == '__main__':
     main()

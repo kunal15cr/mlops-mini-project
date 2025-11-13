@@ -15,10 +15,9 @@ from nltk.stem import WordNetLemmatizer
 import numpy as np
 import os
 import dagshub
-import joblib
 
-mlflow.set_tracking_uri('https://dagshub.com/kunal15cr/mlops-mini-project.mlflow')
-dagshub.init(repo_owner='kunal15cr', repo_name='mlops-mini-project', mlflow=True)
+mlflow.set_tracking_uri('https://dagshub.com/campusx-official/mlops-mini-project.mlflow')
+dagshub.init(repo_owner='campusx-official', repo_name='mlops-mini-project', mlflow=True)
 
 # Load the data
 # Load the data
@@ -149,5 +148,4 @@ with mlflow.start_run():
     mlflow.log_artifact(__file__)
 
     # Log model
-    joblib.dump(model, "model.pkl")
-    mlflow.log_artifact("model.pkl", artifact_path="model")
+    mlflow.sklearn.log_model(grid_search.best_estimator_, "model")
