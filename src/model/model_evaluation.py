@@ -11,7 +11,6 @@ import mlflow.sklearn
 import dagshub
 import os
 
-
 # Set up DagsHub credentials for MLflow tracking
 dagshub_token = os.getenv("DAGSHUB_PAT")
 if not dagshub_token:
@@ -21,7 +20,7 @@ os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
 os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
 dagshub_url = "https://dagshub.com"
-repo_owner = "kunal15cr"
+repo_owner = "campusx-official"
 repo_name = "mlops-mini-project"
 
 # Set up MLflow tracking URI
@@ -139,7 +138,8 @@ def main():
                 for param_name, param_value in params.items():
                     mlflow.log_param(param_name, param_value)
             
-            
+            # Log model to MLflow
+            mlflow.sklearn.log_model(clf, "model")
             
             # Save model info
             save_model_info(run.info.run_id, "model", 'reports/experiment_info.json')
@@ -152,9 +152,6 @@ def main():
 
             # Log the evaluation errors log file to MLflow
             mlflow.log_artifact('model_evaluation_errors.log')
-
-            # Log model to MLflow
-            mlflow.sklearn.log_model(clf, "model")
         except Exception as e:
             logger.error('Failed to complete the model evaluation process: %s', e)
             print(f"Error: {e}")
