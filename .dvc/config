@@ -1,6 +1,4 @@
 [core]
-    remote = myremotr
+    remote = myremote
 ['remote "myremote"']
     url = s3://campusx-bucket
-['remote "myremotr"']
-    url = s3://buckets/ml-mini-projec
