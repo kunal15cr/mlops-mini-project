@@ -10,6 +10,8 @@ import mlflow
 import mlflow.sklearn
 import dagshub
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Set up DagsHub credentials for MLflow tracking
 dagshub_token = os.getenv("DAGSHUB_PAT")
@@ -138,8 +140,7 @@ def main():
                 for param_name, param_value in params.items():
                     mlflow.log_param(param_name, param_value)
             
-            # Log model to MLflow
-            mlflow.sklearn.log_model(clf, "model")
+            
             
             # Save model info
             save_model_info(run.info.run_id, "model", 'reports/experiment_info.json')
@@ -152,6 +153,9 @@ def main():
 
             # Log the evaluation errors log file to MLflow
             mlflow.log_artifact('model_evaluation_errors.log')
+
+            # Log model to MLflow
+            mlflow.sklearn.log_model(clf, "model")
         except Exception as e:
             logger.error('Failed to complete the model evaluation process: %s', e)
             print(f"Error: {e}")
